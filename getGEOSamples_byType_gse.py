@@ -1,7 +1,3 @@
-"""
-author: Rongbin Zheng
-date: 2020-05
-"""
 import os,sys
 import json, re, time
 import urllib.request, urllib.parse, urllib.error
@@ -119,7 +115,7 @@ def _match_scRNAseq(xmlContent, fields=False):
         return {} # return empty, if bulk RNA-seq appears in Title 
     match_res = {}
     ## 1. match with single cell words, remove special characters, like '-'
-    for key1 in ['single cell', 'scrnaseq', 'singlecell rnaseq']:
+    for key1 in ['single cell', 'scrnaseq', 'singlecell rnaseq', 'singlecell transcriptome']:
         tmp = _matchKeyWord(xmlContent, key1)
         if tmp:
             for i in tmp.keys():
@@ -148,8 +144,7 @@ def _checkType(acc, sample_path, type_need):
     """ 
     ## read in XML to get sample description
     ret = {}
-    fields = ['Series/Title', 'Series/Summary', 'Series/Type',
-            'Series/Overall-Design']
+    fields = ['Series/Title', 'Series/Summary', 'Series/Type', 'Series/Overall-Design']
     if sample_path and os.path.isfile(sample_path):
         #NOTE: we need readGeoXML to process
         xmlContent = _getFieldXML(sample_path, fields = fields)
@@ -213,12 +208,12 @@ def getGeoSamples_byType(ddir="geo", ttype=["sc-rna-seq", "sc-atac-seq"], unique
     return ret
 
 
-def getGeoSamples_byTypes(path, ddir="geo", datatype=False, gseids=False, refresh=False): #ttypes = ["ATAC-Seq"]): #"ChIP-Seq", "DNase-Hypersensitivity"]):
+def getGeoSamples_byTypes(path, ddir, datatype=False, gseids=False, refresh=False): #ttypes = ["ATAC-Seq"]): #"ChIP-Seq", "DNase-Hypersensitivity"]):
     ret = []
     if not refresh and os.path.exists(path):
         ret = pickle.load(open(path))
         return ret
-#    for t in ttypes:
+    #for t in ttypes:
     if datatype and gseids:
         ret = getGeoSamples_byType(ddir=ddir, ttype=datatype, unique_ids=gseids, refresh=refresh)
     elif datatype and not gseids:

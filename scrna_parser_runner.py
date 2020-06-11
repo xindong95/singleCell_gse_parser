@@ -14,6 +14,7 @@ from scrna_parser_from_gse import sync_samples_from_gse_factor
 from scrna_parser_from_gse import getLocalGeo
 import time
 import datetime
+
 #def handler(signum, frame):
 #    print "time out!"
 def getSyncLog(infoStr):
@@ -117,7 +118,7 @@ def main():
                 sync_samples_from_gse_factor(infile=infile, gsm_col=gsm_col, fsave = file_save, fill_or_not = fill_or_not, refresh = args.refresh)
 
         if args.sub_command == 'local':
-            file_save, fill_or_not, path, typo, excludes = args.fsave, args.fill, args.path_of_xml, args.type, args.exclude
+            file_save, fill_or_not, path, typo, excludes = args.fsave, args.fill, args.path_of_xml, True, False
             if not file_save:
                 file_save = './singleCell_new_collection.xls'
 
