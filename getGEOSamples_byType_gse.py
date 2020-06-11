@@ -79,7 +79,6 @@ def _getFieldXML(sample_path, fields = ['Sample/Library-Strategy', 'Sample/Descr
             pass
     return info
 
-
 def _matchKeyWord(xmlContent, key, fileds=False):
     ## match key words in a specific xml content
     ## return the match words
@@ -136,6 +135,14 @@ def _match_scRNAseq(xmlContent, fields=False):
                 match_res[i].extend(tmp[i]) if i in match_res.keys() else match_res.update({i:tmp[i]})
     return match_res
 
+def _checkSuperSeries(sample_path):
+    # remove SuperSeries
+    xml_string = readGeoXML(sample_path)
+    root = ET.fromstring(xml_string)
+    if 'SuperSeries of' in [child.attrib['type'] for child in root.findall('Series/Relation')]:
+        return True
+    else:
+        return False
 
 def _checkType(acc, sample_path, type_need):
     """
@@ -146,7 +153,9 @@ def _checkType(acc, sample_path, type_need):
     ret = {}
     fields = ['Series/Title', 'Series/Summary', 'Series/Type', 'Series/Overall-Design']
     if sample_path and os.path.isfile(sample_path):
-        #NOTE: we need readGeoXML to process
+        if _checkSuperSeries(sample_path) == True:
+            return None
+        # NOTE: we need readGeoXML to process
         xmlContent = _getFieldXML(sample_path, fields = fields)
         # parse single cell
         if 'sc-rna-seq' in type_need:
@@ -160,7 +169,9 @@ def _checkType(acc, sample_path, type_need):
             else:
                 os.system('echo "%s: No rnaseq"'%acc)
     if sample_path and not os.path.isfile(sample_path):
-        xml = scrna_parser_from_gse.getGeoXML(accession=acc)
+        xml = scrna_parser_from_gse.getGeoXML(accession=acc, path="/".join(sample_path.split("/")[0:-2]))
+        if _checkSuperSeries(sample_path) == True:
+            return None
         ret = _checkType(acc = acc, sample_path = sample_path, type_need = type_need) if xml else None
         return ret
     return None
