@@ -6,20 +6,16 @@ single cell data parser from GEO
 if no, install one, or contact your manager
 2. install a miniconda3, then create a environment by doing:
 ```
-conda create -n py3_geo python=3
+conda env create -n py3_geo -f requirement.yaml
 conda activate py3_geo
 ```
-3. install requirements
-```
-pip install -r requirments.txt
-```
-4. create a mysql database (named by yourself), and fill in the SQL file
-5. revise the database name and password in in ./dc2/dc2/setting.py, using the one you just set
-6. test your environment deploy, it is ok, if no error report when you run:
+3. create a mysql database (named by yourself), and fill in the SQL file
+4. revise the database name and password in in ./dc2/dc2/setting.py, using the one you just set
+5. test your environment deploy, it is ok, if no error report when you run:
 ```
 python env.py
 ```
-7. run parser:
+6. run parser:
 ```
 python scrna_parser_runner.py -h
 ```
