@@ -102,10 +102,10 @@ def _match_scRNAseq(xmlContent, fields=False):
         return {}
     #filter bulk RNA-seq in single cell RNA-seq GSE, uploder mentioned single cell but actually bulk RNA-seq 
     ## bulk RNA-seq apears in sample description, title, and source name
-    for key in ['bulk rnaseq']:
-        bulk1 = _matchKeyWord(xmlContent, key = 'bulk rnaseq', fileds = fields)
+    for key in ['bulk rnaseq', 'a549', ]:
+        bulk1 = _matchKeyWord(xmlContent, key = key, fileds = fields)
         if bulk1:
-            os.system('echo "bulk rnaseq"')
+            os.system('echo "%s"' % key)
             return {}
     ## or library stratey : bulk RNA-seq appears in any fields 
     bulk2 = _matchKeyWord(xmlContent, key = "library strategy: bulk rnaseq")
@@ -115,6 +115,49 @@ def _match_scRNAseq(xmlContent, fields=False):
     match_res = {}
     ## 1. match with single cell words, remove special characters, like '-'
     for key1 in ['single cell', 'scrnaseq', 'singlecell rnaseq', 'singlecell transcriptome']:
+        tmp = _matchKeyWord(xmlContent, key1)
+        if tmp:
+            for i in tmp.keys():
+                match_res[i].extend(tmp[i]) if i in match_res.keys() else match_res.update({i:tmp[i]})
+    # print(match_res)
+    tmp = []
+    ## 2. match with platform words
+    keys = {}
+    with open('platform.txt') as f:
+        for line in f:
+            line = line.rstrip().split('\t')
+            keys[line[0]] = line[1] # platforms of sequecing, like 10X Genomics, Smart-seq2
+    for key2 in keys.keys():
+        tmp = _matchKeyWord(xmlContent, keys[key2]) # result of key word matching, a list in dict
+        if tmp:
+            for i in tmp.keys():
+                # print(tmp)
+                match_res[i].extend(tmp[i]) if i in match_res.keys() else match_res.update({i:tmp[i]})
+    return match_res
+
+def _match_scATACseq(xmlContent, fields=False):
+    """
+    match key words, like single cell, single cell RNA-seq, and sequencing platform,etc
+    return a dict, contains geo items and matched keys
+    """
+    if not xmlContent:
+        os.system('echo "No XML content"')
+        return {}
+    #filter bulk RNA-seq in single cell RNA-seq GSE, uploder mentioned single cell but actually bulk RNA-seq 
+    ## bulk RNA-seq apears in sample description, title, and source name
+    for key in ['bulk atacseq']:
+        bulk1 = _matchKeyWord(xmlContent, key = key, fileds = fields)
+        if bulk1:
+            os.system('echo "%s"' % key)
+            return {}
+    ## or library stratey : bulk RNA-seq appears in any fields 
+    bulk2 = _matchKeyWord(xmlContent, key = "library strategy: bulk atacseq")
+    if bulk2:
+        os.system('echo "bulk atacseq"')
+        return {} # return empty, if bulk RNA-seq appears in Title 
+    match_res = {}
+    ## 1. match with single cell words, remove special characters, like '-'
+    for key1 in ['single cell', 'scatacseq', 'singlecell atacseq', 'singlecell accessiblity']:
         tmp = _matchKeyWord(xmlContent, key1)
         if tmp:
             for i in tmp.keys():
@@ -159,7 +202,7 @@ def _checkType(acc, sample_path, type_need):
         xmlContent = _getFieldXML(sample_path, fields = fields)
         # parse single cell
         if 'sc-rna-seq' in type_need:
-            # single cell RNA-seq, Library-strategy nmush be RNA-Seq
+            # single cell RNA-seq, Library-strategy must be RNA-Seq
             rnaseq = _matchKeyWord(xmlContent, key = 'rnaseq', fileds = fields)
             if 'Expression profiling by high throughput sequencing' in xmlContent['Series/Type']:
                 res = _match_scRNAseq(xmlContent, fields)
@@ -168,6 +211,16 @@ def _checkType(acc, sample_path, type_need):
                     return ret
             else:
                 os.system('echo "%s: No rnaseq"'%acc)
+        if 'sc-atac-seq' in type_need:
+            # single cell ATAC-seq, Library-strategy must be ATAC-Seq
+            rnaseq = _matchKeyWord(xmlContent, key = 'atacseq', fileds = fields)
+            if 'Genome binding/occupancy profiling by high throughput sequencing' in xmlContent['Series/Type']:
+                res = _match_scATACseq(xmlContent, fields)
+                if res:
+                    ret[acc] = res
+                    return ret
+            else:
+                os.system('echo "%s: No atacseq"'%acc)
     if sample_path and not os.path.isfile(sample_path):
         xml = scrna_parser_from_gse.getGeoXML(accession=acc, path="/".join(sample_path.split("/")[0:-2]))
         if _checkSuperSeries(sample_path) == True:

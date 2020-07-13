@@ -225,8 +225,10 @@ def _sync_gse(fsave, fill_or_not=False, DataType=False, dateRegion = False, refr
             continue
         gseXML = getGeoXML(gseid)
         print(gseid)
-        getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-rna-seq', 'sc-atac-seq'],
-            gseids=[gseid], refresh=refresh, ddir = xmlPath)
+        # getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-rna-seq', 'sc-atac-seq'],
+        #                                                          gseids=[gseid], refresh=refresh, ddir = xmlPath)
+        getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-atac-seq'],
+                                                                 gseids=[gseid], refresh=refresh, ddir = xmlPath)
         if getType:
             for i in getType.keys():
                 # parse sample annotation
@@ -274,7 +276,7 @@ def sync_samples_from_gse_factor(infile, gse_col, fsave, xmlPath='geo_gse', exlu
         gseid = iterm[int(gse_col)]
         print(gseid)
         getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-rna-seq', 'sc-atac-seq'],
-            gseids=[gseid], refresh=refresh, ddir = xmlPath)
+                                                                 gseids=[gseid], refresh=refresh, ddir = xmlPath)
         if getType:
             for i in getType.keys():
                 # parse sample annotation
@@ -304,7 +306,8 @@ def getLocalGeo(fsave, fill_or_not=False, xmlPath="geo_gse", DataType=False, ref
     getSyncLog("# 1. go through all the xml and check the type in the path of %s"%xmlPath)
     local_repo_path = "repository_samples.pickle"
     if DataType:
-        datatype = ['sc-rna-seq', 'sc-atac-seq']
+        # datatype = ['sc-rna-seq', 'sc-atac-seq']
+        datatype = ['sc-atac-seq']
     else:
         datatype = False
     local_repo_samples_dict = getGEOSamples_byType_gse.getGeoSamples_byTypes(path=local_repo_path, datatype=datatype, ddir=xmlPath, refresh=refresh)
@@ -322,7 +325,8 @@ def getLocalGeo(fsave, fill_or_not=False, xmlPath="geo_gse", DataType=False, ref
     # need_added_samples = sorted(list(local_repo_samples - local_db_samples))
     for gseid in local_repo_samples:
         print(gseid)
-        getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-rna-seq', 'sc-atac-seq'], ddir=xmlPath, gseids=[gseid], refresh=refresh)
+        # getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-rna-seq', 'sc-atac-seq'], ddir=xmlPath, gseids=[gseid], refresh=refresh)
+        getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-atac-seq'], ddir=xmlPath, gseids=[gseid], refresh=refresh)
         if getType:
             for i in getType.keys():
                 # parse sample annotation

@@ -1,8 +1,3 @@
-"""
-author: Rongbin Zheng
-date: 2020-05
-"""
-
 import json
 import os
 import re
