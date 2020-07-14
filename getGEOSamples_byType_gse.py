@@ -157,7 +157,7 @@ def _match_scATACseq(xmlContent, fields=False):
         return {} # return empty, if bulk RNA-seq appears in Title 
     match_res = {}
     ## 1. match with single cell words, remove special characters, like '-'
-    for key1 in ['single cell', 'scatacseq', 'singlecell atacseq', 'singlecell accessiblity']:
+    for key1 in ['scatacseq', 'sc atacseq', 'singlecell atacseq', 'singlecell accessiblity', 'single cell atacseq',  'single cell accessiblity', 'singlecell assay for transposase accessible chromatin']:
         tmp = _matchKeyWord(xmlContent, key1)
         if tmp:
             for i in tmp.keys():
