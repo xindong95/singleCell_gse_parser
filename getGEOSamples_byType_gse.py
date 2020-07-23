@@ -145,19 +145,24 @@ def _match_scATACseq(xmlContent, fields=False):
         return {}
     #filter bulk RNA-seq in single cell RNA-seq GSE, uploder mentioned single cell but actually bulk RNA-seq 
     ## bulk RNA-seq apears in sample description, title, and source name
-    for key in ['bulk atacseq']:
-        bulk1 = _matchKeyWord(xmlContent, key = key, fileds = fields)
-        if bulk1:
-            os.system('echo "%s"' % key)
-            return {}
-    ## or library stratey : bulk RNA-seq appears in any fields 
-    bulk2 = _matchKeyWord(xmlContent, key = "library strategy: bulk atacseq")
-    if bulk2:
-        os.system('echo "bulk atacseq"')
-        return {} # return empty, if bulk RNA-seq appears in Title 
+    # for key in ['bulk atacseq']:
+    #     bulk1 = _matchKeyWord(xmlContent, key = key, fileds = fields)
+    #     if bulk1:
+    #         os.system('echo "%s"' % key)
+    #         return {}
+    # ## or library stratey : bulk ATAC-seq appears in any fields 
+    # bulk2 = _matchKeyWord(xmlContent, key = "library strategy: bulk atacseq")
+    # if bulk2:
+    #     os.system('echo "bulk atacseq"')
+    #     return {} # return empty, if bulk ATAC-seq appears in Title 
     match_res = {}
+    singleCellATACSeqKeywords = ['scatacseq', 'sc atacseq', 'singlecell atacseq', 'singlecell chromatin accessibility', 
+                                 'single cell atacseq',  'single cell chromatin accessibility', 'single nucleus atacseq', 
+                                 'singlecell assay for transposase accessible chromatin', 'sciatacseq', 'dsciatacseq',
+                                 'singlenucleus atacseq', '(sci)atacseq', 'scatac', 'single cell profiling of chromatin accessibility',
+                                 'scthsseq', 'sndropseq']
     ## 1. match with single cell words, remove special characters, like '-'
-    for key1 in ['scatacseq', 'sc atacseq', 'singlecell atacseq', 'singlecell accessiblity', 'single cell atacseq',  'single cell accessiblity', 'singlecell assay for transposase accessible chromatin']:
+    for key1 in singleCellATACSeqKeywords:
         tmp = _matchKeyWord(xmlContent, key1)
         if tmp:
             for i in tmp.keys():
@@ -213,7 +218,7 @@ def _checkType(acc, sample_path, type_need):
                 os.system('echo "%s: No rnaseq"'%acc)
         if 'sc-atac-seq' in type_need:
             # single cell ATAC-seq, Library-strategy must be ATAC-Seq
-            rnaseq = _matchKeyWord(xmlContent, key = 'atacseq', fileds = fields)
+            atacseq = _matchKeyWord(xmlContent, key = 'atacseq', fileds = fields)
             if 'Genome binding/occupancy profiling by high throughput sequencing' in xmlContent['Series/Type']:
                 res = _match_scATACseq(xmlContent, fields)
                 if res:
@@ -288,3 +293,6 @@ def getGeoSamples_byTypes(path, ddir, datatype=False, gseids=False, refresh=Fals
         ret = getGeoSamples_byType(ddir=ddir, refresh=refresh)
     # pickle.dump(ret, open(path, "w"))
     return ret
+
+
+
