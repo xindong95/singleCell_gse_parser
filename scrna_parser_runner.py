@@ -29,7 +29,7 @@ def convertTime(timeRegion):
     deltTime = maxtime - mintime
     getSplitTime = []
     if deltTime > datetime.timedelta(days=31):
-        cnt = int(str(deltTime).split(' ')[0]) / 31
+        cnt = int(int(str(deltTime).split(' ')[0]) / 31)
         for i in range(1, cnt+2):
             if i == 1:
                 start = mintime

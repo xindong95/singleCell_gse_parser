@@ -1,4 +1,4 @@
-name: py3_geo
+name: dc2
 channels:
   - defaults
   - conda-forge

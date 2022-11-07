@@ -227,7 +227,9 @@ def _sync_gse(fsave, fill_or_not=False, DataType=False, dateRegion = False, refr
         print(gseid)
         # getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-rna-seq', 'sc-atac-seq'],
         #                                                          gseids=[gseid], refresh=refresh, ddir = xmlPath)
-        getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-atac-seq'],
+        # getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-atac-seq'],
+        #                                                          gseids=[gseid], refresh=refresh, ddir = xmlPath)
+        getType = getGEOSamples_byType_gse.getGeoSamples_byTypes(path = "repository_samples.pickle", datatype = ['sc-rna-seq'],
                                                                  gseids=[gseid], refresh=refresh, ddir = xmlPath)
         if getType:
             for i in getType.keys():

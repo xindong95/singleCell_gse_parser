@@ -185,7 +185,10 @@ def _match_scATACseq(xmlContent, fields=False):
 
 def _checkSuperSeries(sample_path):
     # remove SuperSeries
-    xml_string = readGeoXML(sample_path)
+    try:
+        xml_string = readGeoXML(sample_path)
+    except FileNotFoundError: # this suggest that xml was not existed!
+        return True
     root = ET.fromstring(xml_string)
     if 'SuperSeries of' in [child.attrib['type'] for child in root.findall('Series/Relation')]:
         return True
